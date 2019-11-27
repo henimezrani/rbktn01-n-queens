@@ -79,11 +79,19 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return false; // fixme
+      var bitStr = this.rows()[rowIndex].join('');
+      return check(bitStr); // fixme
     },
+
+
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
+      for (var i = 0 ; i < this.rows().length ; i++) {
+        if (this.hasRowConflictAt(i)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -94,11 +102,21 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
-      return false; // fixme
+      var bitStr = '';
+      for (var i = 0 ; i < this.rows().length ; i++ ) {
+        bitStr += this.rows()[i][colIndex]
+      }
+      return check(bitStr);
+     
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      for (var i = 0 ; i < this.rows().length ; i++) {
+        if (this.hasColConflictAt(i)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -109,12 +127,42 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      if (majorDiagonalColumnIndexAtFirstRow >= 0) {
+        var i = 0;
+        var j = majorDiagonalColumnIndexAtFirstRow;
+      } else{
+        var j = 0;
+        var i = -majorDiagonalColumnIndexAtFirstRow;
+      }
+      var bitStr = '';
+      while(i < this.rows().length && j < this.rows().length){
+        bitStr+=this.rows()[i][j];
+        i++;
+        j++;
+      }
+      if (check(bitStr)) {
+        return true;
+      }
+      return false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+
+      for (var k = 0 ; k < this.rows().length-1 ; k ++) {
+        if (k === 0) {
+          if (this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(0,0))) {
+            return true;
+          }
+        }
+        if (this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(0,k))) {
+          return true;
+        }
+        if (this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(k,0))) {
+          return true;
+        }
+      }
+      return false;
     },
 
 
@@ -124,12 +172,42 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      if (minorDiagonalColumnIndexAtFirstRow >= this.rows().length - 1) {
+        var i = this.rows().length - 1;
+        var j = minorDiagonalColumnIndexAtFirstRow - (this.rows().length - 1); //
+      } else{
+        var j = 0;
+        var i = minorDiagonalColumnIndexAtFirstRow;
+      }
+      var bitStr = '';
+      while(i >= 0 && j < this.rows().length){
+        bitStr+=this.rows()[i][j];
+        i--;
+        j++;
+      }
+      if (check(bitStr)) {
+        return true;
+      }
+      return false;
+
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      for (var k = 0 ; k < this.rows().length-1 ; k ++) {
+        if (k === this.rows().length - 1) {
+          if (this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(this.rows().length - 1,0))) {
+            return true;
+          }
+        }
+        if (this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(this.rows().length - 1,this.rows().length-1-k))) {
+          return true;
+        }
+        if (this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(k,0))) { // Good
+          return true;
+        }
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
@@ -146,3 +224,11 @@
   };
 
 }());
+
+function check(bitStr){
+  var bitInt = parseInt(bitStr,2)
+      if( Math.log2(bitInt,2) === Math.floor(Math.log2(bitInt,2)) || bitInt === 0){
+        return false;
+      }
+    return true; // Returns true when there is a conflict
+}
