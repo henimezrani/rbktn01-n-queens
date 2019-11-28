@@ -5,81 +5,49 @@
   |___/\___/|_| \_/ \___|_|  |___/
 
 */
-var Tree = function(board) {
-  var newTree = {};
-  newTree.board = board;
-  newTree.children = [];
-  _.extend(newTree, treeMethods);
 
-  return newTree;
-};
+window.findSolution = function(n, row, validator, callback){
 
-var treeMethods = {};
-
-treeMethods.addChild = function(board) {
-  this.children.push(Tree(board));
-};
-
-treeMethods.contains = function(target, boo) {
-  var boo = boo || false;
-
-  if (this.value === target) {
-    return true;
+  if(n === row) {
+    callback();
   }
-
-  if(this.children.length > 0){
-    for (var i = 0 ; i < this.children.length ; i++) {
-      boo = this.children[i].contains(target, boo);
-    }
-  }
-
-  return boo;
-};
-
-treeMethods.checkRooksConflicts = function() { //This function returns true if the board has ANY Rook conflict
-  var currentBoard = this.board;
-  if ( currentBoard.hasAnyRowConflicts() || currentBoard.hasAnyColConflicts()) {
-    return true;
-  }
-  return false;
-
-}
-
-treeMethods.checkQueensConflicts = function() { //This function returns true if the board has ANY Queens conflict
-  var currentBoard = this.board;
-  if ( currentBoard.hasAnyRowConflicts() || currentBoard.hasAnyColConflicts() || currentBoard.hasAnyMajorDiagonalConflicts() || currentBoard.hasAnyMinorDiagonalConflicts()) {
-    return true;
-  }
-  return false;
-
-}
-
-treeMethods.generateTree = function(n, board){
-
-  var currentBoard = board || new Board({'n':n});
-  var currentTree = new Tree(currentBoard);
-  var tmp = [];
-
-  var child = Object.create(Board.prototype)
-  Board.prototype.constructor = Board;
-  console.log(child)
-
-  return 0;
 
   for (var i = 0; i < n; i++) {
-    for (var j = 0; j < n; j++) {
-      var child = Object.create(Board.prototype)
-      console.log
-      child.togglePiece(i,j);
-      tmp.push(child)
+    board.togglePiece(row,i)
+
+    if (!board[validator]){
+     findSolution(n,++row,validator,callback);
+   }
+
+    board.togglePiece(row,i)
+  }
+}
+
+  // var currentBoard = board || new Board({'n':n});
+  // var currentTree = new Tree(currentBoard);
+  // var tmp = [];
+
+  // var child = Object.create(Board.prototype)
+
+  // Board.prototype.constructor = Board;
+  // console.log(child)
+
+  // return 0;
+
+  // for (var i = 0; i < n; i++) {
+  //   for (var j = 0; j < n; j++) {
+  //     var child = Object.create(Board.prototype)
+  //     console.log
+  //     child.togglePiece(i,j);
+  //     tmp.push(child)
      
  
-    }
-  }
+  //   }
+  // }
 
   
-  return tmp;
-}
+
+// }
 
 
 
@@ -115,3 +83,4 @@ window.countNQueensSolutions = function(n) {
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
